@@ -6,7 +6,7 @@ import subprocess
 import sys
 
 SIGNAL_RECEIVED = 0
-CMD_KUBECTL_GET_POD = 'kubectl get pod'
+CMD_KUBECTL_GET_POD = 'kubectl get --no-headers=true pods -o custom-columns=:metadata.name'
 CMC_KUBECTL_LOGS_PARTIAL = 'kubectl logs -f '
 POD_LIST = None
 
@@ -26,7 +26,8 @@ def get_parser():
 def pod_name_check(args):
     global POD_LIST
     POD_LIST = subprocess.check_output(CMD_KUBECTL_GET_POD, shell=True)
-    return True if args.pod in POD_LIST else False
+    pod_name_list = filter(None, POD_LIST.split('\n'))
+    return True if args.pod in pod_name_list else False
 
 
 def main():
